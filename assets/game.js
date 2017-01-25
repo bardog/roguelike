@@ -27,7 +27,7 @@ var Game =  {
 	},
 	switchScreen: function(screen) {
 	    // If we had a screen before, notify it that we exited
-	    if (this._currentScreen !== null) {
+	    if (this._currentScreen) {
 	        this._currentScreen.exit();
 	    }
 	    // Clear the display
