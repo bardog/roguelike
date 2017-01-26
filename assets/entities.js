@@ -6,9 +6,12 @@ Game.Mixins.Moveable = {
     name: 'Moveable',
     tryMove: function(x, y, map) {
         var tile = map.getTile(x, y);
+        var target = map.getEntityAt(x, y);
         // Check if we can walk on the tile
         // and if so simply walk onto it
-        if (tile.isWalkable()) {
+        if (target) {
+          return false;
+        } else if (tile.isWalkable()) {
             // Update the entity's position
             this._x = x;
             this._y = y;
@@ -23,10 +26,36 @@ Game.Mixins.Moveable = {
     }
 }
 
+Game.Mixins.PlayerActor = {
+  name: 'PlayerActor',
+  groupName: 'Actor',
+  act: function() {
+    Game.refresh();
+    this.getMap().getEngine().lock();
+  }
+}
+
+Game.Mixins.FungusActor = {
+  name: 'FungusActor',
+  groupName: 'Actor',
+  act: function() { }
+}
+
+Game.FungusTemplate = {
+  character: 'F',
+  foreground: 'green',
+  mixins: [Game.Mixins.FungusActor]
+}
 // Player template
 Game.PlayerTemplate = {
-    character: '@',
+    character: 'B',
     foreground: 'white',
     background: 'black',
-    mixins: [Game.Mixins.Moveable]
+    mixins: [Game.Mixins.Moveable, Game.Mixins.PlayerActor]
+}
+
+Game.Mixins.FungusActor = {
+  name: 'FungusActor',
+  groupName: 'Actor',
+  act: function() { }
 }
