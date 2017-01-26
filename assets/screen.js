@@ -22,8 +22,7 @@ Game.Screen.startScreen = {
 // Define our playing screen
 Game.Screen.playScreen = {
     _map: null,
-    _centerX: 0,
-    _centerY: 0,
+    _player: null,
     enter: function() {
         var map = [];
         var mapWidth = 500;
@@ -54,16 +53,20 @@ Game.Screen.playScreen = {
         });
         // Create our map from the tiles
         this._map = new Game.Map(map);
+
+        this._player = new Game.Entity(Game.PlayerTemplate);
+        var position = this._map.getRandomFloorPosition();
+        this._player.setX(position.x);
+        this._player.setY(position.y);
     },
     move: function(dX, dY) {
       // +X means movement right, -X means left
       // +Y means movement down, -Y means up
 
-      // these Math.mins are to keep the player within the bounds of the map
-      this._centerX = Math.max(0,
-        Math.min(this._map.getWidth() - 1, this._centerX + dX));
-      this._centerY = Math.max(0,
-        Math.min(this._map.getHeight() - 1, this._centerY + dY));
+        var newX = this._player.getX() + dX;
+        var newY = this._player.getY() + dY;
+
+        this._player.tryMove(newX, newY, this._map);
     },
     exit: function() { console.log("Exited play screen."); },
     render: function(display) {
@@ -71,32 +74,33 @@ Game.Screen.playScreen = {
         var screenHeight = Game.getScreenHeight();
 
         // need to make sure we reorient focus if player is too close to edge
-        var topLeftX = Math.max(0, this._centerX - (screenWidth / 2));
+        var topLeftX = Math.max(0, this._player.getX() - (screenWidth / 2));
         topLeftX = Math.min(topLeftX, this._map.getWidth() - screenWidth);
-        var topLeftY = Math.max(0, this._centerY - (screenHeight / 2));
+        var topLeftY = Math.max(0, this._player.getY() - (screenHeight / 2));
         topLeftY = Math.min(topLeftY, this._map.getHeight() - screenHeight);
 
         // Iterate through all map cells
         for (var x = topLeftX; x < topLeftX + screenWidth; x++) {
             for (var y = topLeftY; y < topLeftY + screenHeight; y++) {
                 // Fetch the glyph for the tile and render it to the screen
-                var glyph = this._map.getTile(x, y).getGlyph();
+                var tile = this._map.getTile(x, y);
                 display.draw(
                     x - topLeftX,
                     y - topLeftY,
-                    glyph.getChar(),
-                    glyph.getForeground(),
-                    glyph.getBackground());
+                    tile.getChar(),
+                    tile.getForeground(),
+                    tile.getBackground());
             }
         }
 
+        // Render the player
         display.draw(
-          this._centerX - topLeftX,
-          this._centerY - topLeftY,
-          'B',
-          'white',
-          'black');
-
+          this._player.getX() - topLeftX,
+          this._player.getY() - topLeftY,
+          this._player.getChar(),
+          this._player.getForeground(),
+          this._player.getBackground()
+        );
     },
 
     handleInput: function(inputType, inputData) {
