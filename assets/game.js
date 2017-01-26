@@ -14,10 +14,14 @@ var Game =  {
 	        window.addEventListener(event, function(e) {
 	            // When an event is received, send it to the
 	            // screen if there is one
-	            if (game._currentScreen !== null) {
-	                // Send the event type and data to the screen
-	                game._currentScreen.handleInput(event, e);
-	            }
+							if (game._currentScreen !== null) {
+									// Send the event type and data to the screen
+									game._currentScreen.handleInput(event, e);
+									// Clear the screen
+									game._display.clear();
+									// Render the screen
+									game._currentScreen.render(game._display);
+							}
 	        });
 	    }
 	    // Bind keyboard input events
