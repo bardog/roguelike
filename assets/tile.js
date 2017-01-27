@@ -30,8 +30,7 @@ Game.Tile.floorTile = new Game.Tile({
 });
 Game.Tile.wallTile = new Game.Tile({
     character: '#',
-    foreground: 'goldenrod',
-    diggable: true
+    foreground: 'goldenrod'
 });
 Game.Tile.stairsUpTile = new Game.Tile({
     character: '<',
