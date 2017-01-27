@@ -75,6 +75,13 @@ Game.Mixins.FungusActor = {
         this._growthsRemaining = 5;
     },
     act: function() {
+        if (Math.random() <= 0.2) {
+          var xOffset = Math.floor(Math.random() * 3) - 1;
+          var yOffset = Math.floor(Math.random() * 3) - 1;
+          if (xOffset != 0 || yOffset != 0) {
+            this.tryMove(this.getX() + xOffset, this.getY() + yOffset, this.getZ(), this.getMap());
+          }
+        }
         // Check if we are going to try growing this turn
         if (this._growthsRemaining > 0) {
             if (Math.random() <= 0.02) {
@@ -243,5 +250,6 @@ Game.FungusTemplate = {
     character: 'F',
     foreground: 'green',
     maxHp: 10,
-    mixins: [Game.Mixins.FungusActor, Game.Mixins.Destructible]
+    mixins: [Game.Mixins.FungusActor, Game.Mixins.Destructible,
+              Game.Mixins.Moveable, Game.Mixins.Attacker]
 };
