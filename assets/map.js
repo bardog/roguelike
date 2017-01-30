@@ -9,19 +9,20 @@ Game.Map = function(tiles, player) {
     this.setupFov();
     // Create a table which will hold the entities
     this._entities = {};
+    // create a table which will hold all the items
+    this._items = {};
     // Create the engine and scheduler
     this._scheduler = new ROT.Scheduler.Simple();
     this._engine = new ROT.Engine(this._scheduler);
     // Add the player
     this.addEntityAtRandomPosition(player, 0);
-    // Add random enemies to each floor.
-    var templates = [Game.FungusTemplate, Game.BatTemplate, Game.NewtTemplate];
+    // Add random entities and items to each floor
     for (var z = 0; z < this._depth; z++) {
         for (var i = 0; i < 15; i++) {
-            // Randomly select a template
-            var template = templates[Math.floor(Math.random() * templates.length)];
-            // Place the entity
-            this.addEntityAtRandomPosition(new Game.Entity(template), z);
+          this.addEntityAtRandomPosition(Game.EntityRepository.createRandom(), z);
+        }
+        for (var i = 0; i < 15; i++) {
+          this.addItemAtRandomPosition(Game.ItemRepository.createRandom(), z);
         }
     }
     // Setup the explored array
@@ -125,6 +126,37 @@ Game.Map.prototype.getEntities = function() {
 Game.Map.prototype.getEntityAt = function(x, y, z){
     // get the entity based on position key
     return this._entities[x + ',' + y + ',' + z];
+}
+Game.Map.prototype.getItemsAt = function(x, y, z){
+    // get the entity based on position key
+    return this._items[x + ',' + y + ',' + z];
+}
+Game.Map.prototype.setItemsAt = function(x, y, z, items) {
+  // if our items array is empty, delete this key from the table
+  var key = x + ',' + y + ',' + z;
+  if (items.length === 0) {
+    if (this._items[key]) {
+      delete this._items[key];
+    }
+  } else {
+    // update items at that key
+    this._items[key] = items;
+  }
+};
+
+Game.Map.prototype.addItem = function(x, y, z, item) {
+  // if we already have items at that position, add it to the list!
+  var key = x + ',' + y + ',' + z;
+  if (this._items[key]) {
+    this._items[key].push(item);
+  } else {
+    this._items[key] = [item];
+  }
+};
+
+Game.Map.prototype.addItemAtRandomPosition = function(item, z) {
+  var position = this.getRandomFloorPosition(z);
+  this.addItem(position.x, position.y, position.z, item);
 }
 Game.Map.prototype.getEntitiesWithinRadius = function(centerX, centerY,
                                                       centerZ, radius) {
