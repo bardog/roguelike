@@ -291,7 +291,7 @@ Game.Screen.ItemListScreen = function(template) {
     this._canSelectItem = template['canSelect'];
     // Whether the user can select multiple items.
     this._canSelectMultipleItems = template['canSelectMultipleItems'];
-    // whether a 'no item' option should appear
+    // Whether a 'no item' option should appear.
     this._hasNoItemOption = template['hasNoItemOption'];
 };
 
@@ -320,9 +320,9 @@ Game.Screen.ItemListScreen.prototype.render = function(display) {
     var letters = 'abcdefghijklmnopqrstuvwxyz';
     // Render the caption in the top row
     display.drawText(0, 0, this._caption);
-    // render the no item row if enabled
+    // Render the no item row if enabled
     if (this._hasNoItemOption) {
-      display.drawText(0, 1, '0 - no item');
+        display.drawText(0, 1, '0 - no item');
     }
     var row = 0;
     for (var i = 0; i < this._items.length; i++) {
@@ -334,15 +334,16 @@ Game.Screen.ItemListScreen.prototype.render = function(display) {
             // the letter and the item's name.
             var selectionState = (this._canSelectItem && this._canSelectMultipleItems &&
                 this._selectedIndices[i]) ? '+' : '-';
-            // check if the item is worn/wielded
+            // Check if the item is worn or wielded
             var suffix = '';
             if (this._items[i] === this._player.getArmor()) {
-              suffix = ' (wearing)';
+                suffix = ' (wearing)';
             } else if (this._items[i] === this._player.getWeapon()) {
-              suffix = ' (wielding)';
+                suffix = ' (wielding)';
             }
             // Render at the correct row and add 2.
-            display.drawText(0, 2 + row, letter + ' ' + selectionState + ' ' + this._items[i].describe());
+            display.drawText(0, 2 + row,  letter + ' ' + selectionState + ' ' +
+                this._items[i].describe() + suffix);
             row++;
         }
     }
@@ -372,10 +373,11 @@ Game.Screen.ItemListScreen.prototype.handleInput = function(inputType, inputData
         // Handle pressing return when items are selected
         } else if (inputData.keyCode === ROT.VK_RETURN) {
             this.executeOkFunction();
-        // Handle pressing a letter if we can select
+        // Handle pressing zero when 'no item' selection is enabled
         } else if (this._canSelectItem && this._hasNoItemOption && inputData.keyCode === ROT.VK_0) {
-          this._selectedIndices = {};
-          this.executeOkFunction();
+            this._selectedIndices = {};
+            this.executeOkFunction();
+        // Handle pressing a letter if we can select
         } else if (this._canSelectItem && inputData.keyCode >= ROT.VK_A &&
             inputData.keyCode <= ROT.VK_Z) {
             // Check if it maps to a valid item by subtracting 'a' from the character
@@ -420,56 +422,6 @@ Game.Screen.pickupScreen = new Game.Screen.ItemListScreen({
     }
 });
 
-Game.Screen.wieldScreen = new Game.Screen.ItemListScreen({
-  caption: 'Wield yer items!',
-  canSelect: true,
-  canSelectMultipleItems: false,
-  hasNoItemOption: true,
-  isAcceptable: function(item) {
-    return item && item.hasMixin('Equippable') && item.isWieldable();
-  },
-  ok: function(selectedItems) {
-    // check if we selected 'no item'
-    var keys = Object.keys(selectedItems);
-    if (keys.length === 0) {
-      this._player.unwield();
-      Game.sendMessage(this._player, "You are empty handed.");
-    } else {
-      // make sure to unequip the item first in case it's the armor
-      var item = selectedItems[keys[0]];
-      this._player.unequip(item);
-      this._player.wield(item);
-      Game.sendMessage(this._player, "You are wielding %s.", [item.describeA()]);
-    }
-    return true;
-  }
-});
-
-Game.Screen.wieldScreen = new Game.Screen.ItemListScreen({
-  caption: 'Wear yer swag!',
-  canSelect: true,
-  canSelectMultipleItems: false,
-  hasNoItemOption: true,
-  isAcceptable: function(item) {
-    return item && item.hasMixin('Equippable') && item.isWearable();
-  },
-  ok: function(selectedItems) {
-    // check if we selected 'no item'
-    var keys = Object.keys(selectedItems);
-    if (keys.length === 0) {
-      this._player.takeOff();
-      Game.sendMessage(this._player, "You wear nothing.");
-    } else {
-      // make sure to unequip the item first in case it's the weapon
-      var item = selectedItems[keys[0]];
-      this._player.unequip(item);
-      this._player.wear(item);
-      Game.sendMessage(this._player, "You put %s on.", [item.describeA()]);
-    }
-    return true;
-  }
-});
-
 Game.Screen.dropScreen = new Game.Screen.ItemListScreen({
     caption: 'Choose the item you wish to drop',
     canSelect: true,
@@ -496,6 +448,56 @@ Game.Screen.eatScreen = new Game.Screen.ItemListScreen({
         item.eat(this._player);
         if (!item.hasRemainingConsumptions()) {
             this._player.removeItem(key);
+        }
+        return true;
+    }
+});
+
+Game.Screen.wieldScreen = new Game.Screen.ItemListScreen({
+    caption: 'Choose the item you wish to wield',
+    canSelect: true,
+    canSelectMultipleItems: false,
+    hasNoItemOption: true,
+    isAcceptable: function(item) {
+        return item && item.hasMixin('Equippable') && item.isWieldable();
+    },
+    ok: function(selectedItems) {
+        // Check if we selected 'no item'
+        var keys = Object.keys(selectedItems);
+        if (keys.length === 0) {
+            this._player.unwield();
+            Game.sendMessage(this._player, "You are empty handed.")
+        } else {
+            // Make sure to unequip the item first in case it is the armor.
+            var item = selectedItems[keys[0]];
+            this._player.unequip(item);
+            this._player.wield(item);
+            Game.sendMessage(this._player, "You are wielding %s.", [item.describeA()]);
+        }
+        return true;
+    }
+});
+
+Game.Screen.wearScreen = new Game.Screen.ItemListScreen({
+    caption: 'Choose the item you wish to wear',
+    canSelect: true,
+    canSelectMultipleItems: false,
+    hasNoItemOption: true,
+    isAcceptable: function(item) {
+        return item && item.hasMixin('Equippable') && item.isWearable();
+    },
+    ok: function(selectedItems) {
+        // Check if we selected 'no item'
+        var keys = Object.keys(selectedItems);
+        if (keys.length === 0) {
+            this._player.unwield();
+            Game.sendMessage(this._player, "You are not wearing anthing.")
+        } else {
+            // Make sure to unequip the item first in case it is the weapon.
+            var item = selectedItems[keys[0]];
+            this._player.unequip(item);
+            this._player.wear(item);
+            Game.sendMessage(this._player, "You are wearing %s.", [item.describeA()]);
         }
         return true;
     }
