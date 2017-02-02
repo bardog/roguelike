@@ -6,7 +6,7 @@ Game.Screen.startScreen = {
     exit: function() { console.log("Exited start screen."); },
     render: function(display) {
         // Render our prompt to the screen
-        display.drawText(1,1, "%c{yellow}______   ______  _        ______  ______  ______  _____   ______");
+        display.drawText(1,1, "%c{yellow}______   ______  _        ______  ______  ______  _____   ______    ^");
         display.drawText(1,2, "%c{yellow}(  __  \\ (  __  )( (    /|(  ___ \\(  ___ \\(  ___ )(  __ \\ (  __  )  / \\  ");
         display.drawText(1,3, "%c{yellow}| (  \\  )| (  ) ||  \\  ( || (   \\\/| (   \\\/| (   )|| (  ) )| (  ) |  | |   ");
         display.drawText(1,4, "%c{yellow}| |   ) || (__) ||   \\ | || |     | (__   | (___)|| (_/ / | (__) |  | |  ");
