@@ -6,22 +6,25 @@ Game.Screen.startScreen = {
     exit: function() { console.log("Exited start screen."); },
     render: function(display) {
         // Render our prompt to the screen
-        display.drawText(1,1, "%c{yellow}______   ______  _        ______  ______  ______  _____   ______     ^");
-        display.drawText(1,2, "%c{yellow}(  __  \\ (  __  )( (    /|(  ___ \\(  ___ \\(  ___ )(  __ \\ (  __  )  / \\  ");
-        display.drawText(1,3, "%c{yellow}| (  \\  )| (  ) ||  \\  ( || (   \\\/| (   \\\/| (   )|| (  ) )| (  ) |  | |   ");
-        display.drawText(1,4, "%c{yellow}| |   ) || (__) ||   \\ | || |     | (__   | (___)|| (_/ / | (__) |  | |  ");
-        display.drawText(1,5, "%c{yellow}| |   | ||  __  || (\\ \\) || | ___ |  __)  |     _)|  _ (  |  __  |__|_|__");
-        display.drawText(1,6, "%c{yellow}| |   ) || (  ) || | \\   || | \\  )| (     | (\\ (  | ( \\ \\ | (  ) |\\_   _/   ");
-        display.drawText(1,7, "%c{yellow}| (__/  )| )  ( || )  \\  || (__) || (___/\\| ) \\ \\_| )__) )| )  ( |  ) (  ");
-        display.drawText(1,8, "%c{yellow}(______/ |/    \\||/    )_)(______)(______/|/   \\_/|/ \\__/ |/    \\|  )_(");
+        var leftOffset = 4;
+        var topOffset = 3;
+        display.drawText(leftOffset,topOffset, "%c{yellow}______   ______  _        ______  ______  ______  _____   ______     ^");
+        display.drawText(leftOffset,topOffset + 1, "%c{yellow}(  __  \\ (  __  )( (    /|(  ___ \\(  ___ \\(  ___ )(  __ \\ (  __  )  / \\  ");
+        display.drawText(leftOffset,topOffset + 2, "%c{yellow}| (  \\  )| (  ) ||  \\  ( || (   \\\/| (   \\\/| (   )|| (  ) )| (  ) |  | |   ");
+        display.drawText(leftOffset,topOffset + 3, "%c{yellow}| |   ) || (__) ||   \\ | || |     | (__   | (___)|| (_/ / | (__) |  | |  ");
+        display.drawText(leftOffset,topOffset + 4, "%c{yellow}| |   | ||  __  || (\\ \\) || | ___ |  __)  |     _)|  _ (  |  __  |__|_|__");
+        display.drawText(leftOffset,topOffset + 5, "%c{yellow}| |   ) || (  ) || | \\   || | \\  )| (     | (\\ (  | ( \\ \\ | (  ) |\\_   _/   ");
+        display.drawText(leftOffset,topOffset + 6, "%c{yellow}| (__/  )| )  ( || )  \\  || (__) || (___/\\| ) \\ \\_| )__) )| )  ( |  ) (  ");
+        display.drawText(leftOffset,topOffset + 7, "%c{yellow}(______/ |/    \\||/    )_)(______)(______/|/   \\_/|/ \\__/ |/    \\|  )_(");
         var skullOffset = 20;
-        display.drawText(skullOffset+1,12, "%c{white}_....._");
-        display.drawText(skullOffset,13, "%c{white}/ .   . \\");
-        display.drawText(skullOffset,14, "%c{white}| o   o |");
-        display.drawText(skullOffset,15, "%c{white}\\   ^   /");
-        display.drawText(skullOffset+1,16, "%c{white}|+++++|");
-        display.drawText(skullOffset+10,16,"%c{yellow}    < Press [Enter] to start!");
-        display.drawText(skullOffset+1,17, "%c{white}\\__|__/");
+        var skullTopOffset = topOffset + 10;
+        display.drawText(skullOffset+1, skullTopOffset, "%c{white}_....._");
+        display.drawText(skullOffset,   skullTopOffset + 1, "%c{white}/ .   . \\");
+        display.drawText(skullOffset,   skullTopOffset + 2, "%c{white}| o   o |");
+        display.drawText(skullOffset,   skullTopOffset + 3, "%c{white}\\   ^   /");
+        display.drawText(skullOffset+1, skullTopOffset + 4, "%c{white}|+++++|");
+        display.drawText(skullOffset+10,skullTopOffset + 4,"%c{yellow}    < Press [Enter] to start!");        
+        display.drawText(skullOffset+1, skullTopOffset + 5, "%c{white}\\__|__/");
         /*
               _....._
              / .   . \
@@ -41,6 +44,11 @@ Game.Screen.startScreen = {
     }
 };
 
+Game.Screen.prototype.drawSkull = function(position, mouth, text) {
+  this._position = position || 1;
+  this._mouth = mouth || 'toothy'; // ++++++
+  this._text = text || "Howdy";
+}
 
 // Define our playing screen
 Game.Screen.playScreen = {
