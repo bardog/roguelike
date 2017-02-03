@@ -23,7 +23,7 @@ Game.Screen.startScreen = {
         display.drawText(skullOffset,   skullTopOffset + 2, "%c{white}| o   o |");
         display.drawText(skullOffset,   skullTopOffset + 3, "%c{white}\\   ^   /");
         display.drawText(skullOffset+1, skullTopOffset + 4, "%c{white}|+++++|");
-        display.drawText(skullOffset+10,skullTopOffset + 4,"%c{yellow}    < Press [Enter] to start!");        
+        display.drawText(skullOffset+10,skullTopOffset + 4,"%c{yellow}    < Press [Enter] to start!");
         display.drawText(skullOffset+1, skullTopOffset + 5, "%c{white}\\__|__/");
         /*
               _....._
@@ -43,13 +43,13 @@ Game.Screen.startScreen = {
         }
     }
 };
-
+/*
 Game.Screen.prototype.drawSkull = function(position, mouth, text) {
   this._position = position || 1;
   this._mouth = mouth || 'toothy'; // ++++++
   this._text = text || "Howdy";
-}
-
+};
+*/
 // Define our playing screen
 Game.Screen.playScreen = {
     _map: null,
