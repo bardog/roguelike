@@ -16,15 +16,8 @@ Game.Screen.startScreen = {
         display.drawText(leftOffset,topOffset + 5, "%c{yellow}| |   ) || (  ) || | \\   || | \\  )| (     | (\\ (  | ( \\ \\ | (  ) |\\_   _/   ");
         display.drawText(leftOffset,topOffset + 6, "%c{yellow}| (__/  )| )  ( || )  \\  || (__) || (___/\\| ) \\ \\_| )__) )| )  ( |  ) (  ");
         display.drawText(leftOffset,topOffset + 7, "%c{yellow}(______/ |/    \\||/    )_)(______)(______/|/   \\_/|/ \\__/ |/    \\|  )_(");
-        var skullOffset = 20;
-        var skullTopOffset = topOffset + 10;
-        display.drawText(skullOffset+1, skullTopOffset, "%c{white}_....._");
-        display.drawText(skullOffset,   skullTopOffset + 1, "%c{white}/ .   . \\");
-        display.drawText(skullOffset,   skullTopOffset + 2, "%c{white}| o   o |");
-        display.drawText(skullOffset,   skullTopOffset + 3, "%c{white}\\   ^   /");
-        display.drawText(skullOffset+1, skullTopOffset + 4, "%c{white}|+++++|");
-        display.drawText(skullOffset+10,skullTopOffset + 4,"%c{yellow}    < Press [Enter] to start!");
-        display.drawText(skullOffset+1, skullTopOffset + 5, "%c{white}\\__|__/");
+
+        Game.Screen.drawSkull(display, 20, 13, "Press [Enter] to start!", "random");
         /*
               _....._
              / .   . \
@@ -44,12 +37,29 @@ Game.Screen.startScreen = {
     }
 };
 /*
-Game.Screen.prototype.drawSkull = function(position, mouth, text) {
-  this._position = position || 1;
-  this._mouth = mouth || 'toothy'; // ++++++
-  this._text = text || "Howdy";
-};
+Game.Screen.ItemListScreen = function(template) {
+    // Set up based on the template
+    this._caption = template['caption'];
+    this._okFunction = template['ok'];
+    // By default, we use the identity function
+    this._isAcceptableFunction = template['isAcceptable'] || function(x) {
+        return x;
+    }
 */
+Game.Screen.drawSkull = function(display, leftOffset, topOffset, text, mouth) {
+  if (mouth == "random") {
+    var mouths = ["+++++", "   o ", "  O  ", "UUUUU", "vVvVv", "IIIII"]
+    mouth = mouths[Math.floor(Math.random()*mouths.length)];
+  }
+  display.drawText(leftOffset+1, topOffset, "%c{white}_....._");
+  display.drawText(leftOffset,   topOffset + 1, "%c{white}/ .   . \\");
+  display.drawText(leftOffset,   topOffset + 2, "%c{white}| o   o |");
+  display.drawText(leftOffset,   topOffset + 3, "%c{white}\\   ^   /");
+  display.drawText(leftOffset+1, topOffset + 4, "%c{white}|" + mouth + "|");
+  display.drawText(leftOffset+10,topOffset + 4,"%c{yellow}    < Press [Enter] to start!");
+  display.drawText(leftOffset+1, topOffset + 5, "%c{white}\\__|__/");
+};
+
 // Define our playing screen
 Game.Screen.playScreen = {
     _map: null,
