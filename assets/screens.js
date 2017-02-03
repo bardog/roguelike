@@ -14,7 +14,22 @@ Game.Screen.startScreen = {
         display.drawText(1,6, "%c{yellow}| |   ) || (  ) || | \\   || | \\  )| (     | (\\ (  | ( \\ \\ | (  ) |\\_   _/   ");
         display.drawText(1,7, "%c{yellow}| (__/  )| )  ( || )  \\  || (__) || (___/\\| ) \\ \\_| )__) )| )  ( |  ) (  ");
         display.drawText(1,8, "%c{yellow}(______/ |/    \\||/    )_)(______)(______/|/   \\_/|/ \\__/ |/    \\|  )_(");
-        display.drawText(1,10, "Press [Enter] to start!");
+        var skullOffset = 20;
+        display.drawText(skullOffset+1,12, "%c{white}_....._");
+        display.drawText(skullOffset,13, "%c{white}/ .   . \\");
+        display.drawText(skullOffset,14, "%c{white}| o   o |");
+        display.drawText(skullOffset,15, "%c{white}\\   ^   /");
+        display.drawText(skullOffset+1,16, "%c{white}|+++++|");
+        display.drawText(skullOffset+10,16,"%c{yellow}    < Press [Enter] to start!");
+        display.drawText(skullOffset+1,17, "%c{white}\\__|__/");
+        /*
+              _....._
+             / .   . \
+             | o   o |
+             \   ^   /
+              |+++++|    < Press [Enter] to start!
+              \__|__/
+        */
     },
     handleInput: function(inputType, inputData) {
         // When [Enter] is pressed, go to the play screen
@@ -25,6 +40,7 @@ Game.Screen.startScreen = {
         }
     }
 };
+
 
 // Define our playing screen
 Game.Screen.playScreen = {
