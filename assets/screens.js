@@ -8,16 +8,20 @@ Game.Screen.startScreen = {
         // Render our prompt to the screen
         var leftOffset = 4;
         var topOffset = 3;
-        display.drawText(leftOffset+1,topOffset, "%c{yellow} ______   ______  _        ______  ______  ______  _____   ______    ^");
-        display.drawText(leftOffset,topOffset + 1, "%c{yellow}(  __  \\ (  __  )( (    /|(  ___ \\(  ___ \\(  ___ )(  __ \\ (  __  )  / \\  ");
-        display.drawText(leftOffset,topOffset + 2, "%c{yellow}| (  \\  )| (  ) ||  \\  ( || (   \\\/| (   \\\/| (   )|| (  ) )| (  ) |  | |   ");
-        display.drawText(leftOffset,topOffset + 3, "%c{yellow}| |   ) || (__) ||   \\ | || |     | (__   | (___)|| (_/ / | (__) |  | |  ");
-        display.drawText(leftOffset,topOffset + 4, "%c{yellow}| |   | ||  __  || (\\ \\) || | ___ |  __)  |     _)|  _ (  |  __  |__|_|__");
-        display.drawText(leftOffset,topOffset + 5, "%c{yellow}| |   ) || (  ) || | \\   || | \\  )| (     | (\\ (  | ( \\ \\ | (  ) |\\_   _/   ");
-        display.drawText(leftOffset,topOffset + 6, "%c{yellow}| (__/  )| )  ( || )  \\  || (__) || (___/\\| ) \\ \\_| )__) )| )  ( |  ) (  ");
-        display.drawText(leftOffset,topOffset + 7, "%c{yellow}(______/ |/    \\||/    )_)(______)(______/|/   \\_/|/ \\__/ |/    \\|  )_(");
 
-        Game.Screen.drawSkull(display, 20, 13, "Press [Enter] to start!", "random");
+        var colors = ["yellow"];
+        var color = colors[Math.floor(Math.random() * colors.length)];
+
+        display.drawText(leftOffset+1,topOffset,   "%c{" + color + "} ______   ______  _        ______  ______  ______  _____   ______    ^");
+        display.drawText(leftOffset,topOffset + 1, "%c{" + color + "}(  __  \\ (  __  )( (    /|(  ___ \\(  ___ \\(  ___ )(  __ \\ (  __  )  / \\  ");
+        display.drawText(leftOffset,topOffset + 2, "%c{" + color + "}| (  \\  )| (  ) ||  \\  ( || (   \\\/| (   \\\/| (   )|| (  ) )| (  ) |  | |   ");
+        display.drawText(leftOffset,topOffset + 3, "%c{" + color + "}| |   ) || (__) ||   \\ | || |     | (__   | (___)|| (_/ / | (__) |  | |  ");
+        display.drawText(leftOffset,topOffset + 4, "%c{" + color + "}| |   | ||  __  || (\\ \\) || | ___ |  __)  |     _)|  _ (  |  __  |__|_|__");
+        display.drawText(leftOffset,topOffset + 5, "%c{" + color + "}| |   ) || (  ) || | \\   || | \\  )| (     | (\\ (  | ( \\ \\ | (  ) |\\_   _/   ");
+        display.drawText(leftOffset,topOffset + 6, "%c{" + color + "}| (__/  )| )  ( || )  \\  || (__) || (___/\\| ) \\ \\_| )__) )| )  ( |  ) (  ");
+        display.drawText(leftOffset,topOffset + 7, "%c{" + color + "}(______/ |/    \\||/    )_)(______)(______/|/   \\_/|/ \\__/ |/    \\|  )_(");
+
+        Game.Screen.drawSkull(display, leftOffset + 16, topOffset + 10, "Press [Enter] to start!", "random");
         /*
               _....._
              / .   . \
@@ -48,12 +52,27 @@ Game.Screen.ItemListScreen = function(template) {
 */
 Game.Screen.drawSkull = function(display, leftOffset, topOffset, text, mouth) {
   if (mouth == "random") {
-    var mouths = ["+++++", "   o ", "  O  ", "UUUUU", "vVvVv", "IIIII", "-----", "~~~~~", "  ~  ", "  u  "]
+    var mouths = ["+++++", "   o ", "  O  ", "UUUUU", "vVvVv", "IIIII", "-----", "~~~~~", "  ~  ", "  u  ", "XXXXX", "#####"];
     mouth = mouths[Math.floor(Math.random()*mouths.length)];
   }
+
+  var leftEye = "o";
+  var rightEye = leftEye;
+
+  if (Math.random() < .2) {
+    var rando = Math.random();
+    if (rando < .4) {
+      leftEye = ">";
+    } else if (rando < .8){
+      rightEye = "<";
+    } else {
+      leftEye = rightEye = "*";
+    }
+  }
+
   display.drawText(leftOffset+1, topOffset, "%c{white}_....._");
   display.drawText(leftOffset,   topOffset + 1, "%c{white}/ .   . \\");
-  display.drawText(leftOffset,   topOffset + 2, "%c{white}| o   o |");
+  display.drawText(leftOffset,   topOffset + 2, "%c{white}| " + leftEye + "   " + rightEye +" |");
   display.drawText(leftOffset,   topOffset + 3, "%c{white}\\   ^   /");
   display.drawText(leftOffset+1, topOffset + 4, "%c{white}|" + mouth + "|");
   display.drawText(leftOffset+10,topOffset + 4,"%c{yellow}    < Press [Enter] to start!");
