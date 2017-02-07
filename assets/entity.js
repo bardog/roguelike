@@ -8,7 +8,7 @@ Game.Entity = function(properties) {
     this._z = properties['z'] || 0;
     this._map = null;
     this._alive = true;
-    // acting speed
+    // Acting speed
     this._speed = properties['speed'] || 1000;
 };
 // Make entities inherit all the functionality from dynamic glyphs
@@ -27,7 +27,7 @@ Game.Entity.prototype.setMap = function(map) {
     this._map = map;
 };
 Game.Entity.prototype.setSpeed = function(speed) {
-  this._speed = speed;
+    this._speed = speed;
 };
 Game.Entity.prototype.setPosition = function(x, y, z) {
     var oldX = this._x;
@@ -55,8 +55,9 @@ Game.Entity.prototype.getMap = function() {
     return this._map;
 };
 Game.Entity.prototype.getSpeed = function() {
-  return this._speed;
+    return this._speed;
 };
+
 Game.Entity.prototype.tryMove = function(x, y, z, map) {
     var map = this.getMap();
     // Must use starting z
@@ -71,7 +72,11 @@ Game.Entity.prototype.tryMove = function(x, y, z, map) {
             this.setPosition(x, y, z);
         }
     } else if (z > this.getZ()) {
-        if (tile != Game.Tile.stairsDownTile) {
+        if (tile === Game.Tile.holeToCavernTile &&
+            this.hasMixin(Game.EntityMixins.PlayerActor)) {
+            // Switch the entity to a boss cavern!
+            this.switchMap(new Game.Map.BossCavern());
+        } else if (tile != Game.Tile.stairsDownTile) {
             Game.sendMessage(this, "You can't go down here!");
         } else {
             this.setPosition(x, y, z);
@@ -139,4 +144,17 @@ Game.Entity.prototype.kill = function(message) {
     } else {
         this.getMap().removeEntity(this);
     }
+};
+Game.Entity.prototype.switchMap = function(newMap) {
+    // If it's the same map, nothing to do!
+    if (newMap === this.getMap()) {
+        return;
+    }
+    this.getMap().removeEntity(this);
+    // Clear the position
+    this._x = 0;
+    this._y = 0;
+    this._z = 0;
+    // Add to the new map
+    newMap.addEntity(this);
 };
