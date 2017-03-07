@@ -59,7 +59,7 @@ Game.EntityMixins.FungusActor = {
                         // Send a message nearby!
                         Game.sendMessageNearby(this.getMap(),
                             entity.getX(), entity.getY(), entity.getZ(),
-                            'The fungus is spreading!');
+                            'The fungus is spreading!', null, player.getSightRadius());
                     }
                 }
             }
@@ -89,6 +89,9 @@ Game.EntityMixins.TaskActor = {
             return this.hasMixin('Sight') && this.canSee(this.getMap().getPlayer());
         } else if (task === 'wander') {
             return true;
+        } else if (task === 'seek') {
+            return this.hasMixin('Sight') && this.canSee(this.getMap().getPlayer());
+            // also want to know if they can see some stairs
         } else {
             throw new Error('Tried to perform undefined task ' + task);
         }
@@ -102,6 +105,9 @@ Game.EntityMixins.TaskActor = {
         if (offsets === 1) {
             if (this.hasMixin('Attacker')) {
                 this.attack(player);
+                return;
+            } else if (this.hasMixin('Chatty')) {
+                this.chat(player);
                 return;
             }
         }
@@ -194,6 +200,39 @@ Game.EntityMixins.GiantZombieActor = Game.extend(Game.EntityMixins.TaskActor, {
     }
 });
 
+Game.EntityMixins.Seeker = {
+  name: 'Seeker',
+  init: function(template) {
+    this._desperation = template['desperation'] || 0; //how much they seek the player
+  },
+  getDesperation: function() {
+    return this._desperation;
+  },
+  seek: function(target) {
+    //was going to have this based on how desperate the seeker was, but easier
+    // if we start it simple
+    var playerZ = target.getZ();
+    var direction = 0; // positive is lower, negative is higher, 0 is same floor
+    if (playerZ > this.getZ()) {
+      direction = 1;
+    } else if (playerZ < this.getZ()) {
+      direction = -1;
+    }
+
+    //depending on which direction, either go up/down stairs or seek within floor
+
+  }
+}
+
+Game.EntityMixins.Chatter = {
+  name: 'Chatter',
+
+  chat: function() {
+    Game.sendMessageNearby(this.getMap(),
+        entity.getX(), entity.getY(), entity.getZ(),
+        'The fungus is spreading!', null, 100);
+  }
+}
 
 // This signifies our entity can attack basic destructible enities
 Game.EntityMixins.Attacker = {
@@ -387,14 +426,14 @@ Game.sendMessage = function(recipient, message, args) {
         recipient.receiveMessage(message);
     }
 };
-Game.sendMessageNearby = function(map, centerX, centerY, centerZ, message, args) {
+Game.sendMessageNearby = function(map, centerX, centerY, centerZ, message, args, radius = 5) {
     // If args were passed, then we format the message, else
     // no formatting is necessary
     if (args) {
         message = vsprintf(message, args);
     }
     // Get the nearby entities
-    entities = map.getEntitiesWithinRadius(centerX, centerY, centerZ, 5);
+    entities = map.getEntitiesWithinRadius(centerX, centerY, centerZ, radius);
     // Iterate through nearby entities, sending the message if
     // they can receive it.
     for (var i = 0; i < entities.length; i++) {
